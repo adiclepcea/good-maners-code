@@ -5,27 +5,28 @@ import java.util.Set;
 
 public class Story{
 
-    public Story(){
-        Character villain = new Character();
-        Character poorGuy = new Character();
-        Character hero = new Character();
+    private Character villain;
+    private Character poorGuy;
+    private Character hero;
+    private Weapon bow;
 
-        villain.setName("Zmeul shmecher");
-        poorGuy.setName("Fratele mijlociu");
-        hero.setName("Praslea cel voinic");
-
+    public Story(){        
         
-        Weapon bow = new Weapon("arc", 90);
-
-        villain.setFortune(new BigDecimal(1000));
-        poorGuy.setFortune(new BigDecimal(1000));
-        hero.setFortune(new BigDecimal(1000));
-
-        villain.setHealth(1000);
+        prepareCharacters();
 
         tellStory(villain, poorGuy, hero, bow, bow.getName());
-
     }
+
+    private void prepareCharacters(){
+        
+        bow = new Weapon("arc", 90);
+        villain = new Character("Zmeul smecher", new BigDecimal(1000));
+        poorGuy = new Character("Fratele mijlociu", new BigDecimal(1000));
+        hero = new Character("Praslea cel voinic", new BigDecimal(1000), bow);
+
+        villain.setHealth(1000);
+    }
+
 
     private void tellStory(Character villain, 
         Character poorGuy, 
@@ -82,6 +83,18 @@ public class Story{
             weapons = new HashSet<>();
         }
 
+        Character(String name, BigDecimal fortune){
+            this();
+            this.name = name;
+            this.fortune = fortune;
+        }
+
+        Character(String name, BigDecimal fortune, Weapon weapon){
+            this(name, fortune);
+            this.findWeapon(weapon);
+            this.armWith(weapon.getName());            
+        }
+
         public String weaponName(){
             if(activeWeapon.isPresent()){
                 return activeWeapon.get().getName();
@@ -123,11 +136,9 @@ public class Story{
         //DRY - 1
         //could have been delete, but loose is more apropriate to the story
         public void looseWeapon(String weaponName){
-            Optional<Weapon> weapon = weapons
-                .stream()
-                .filter(w -> 
-                    w.getName().equals(weaponName))
-                .findFirst();
+            
+            Optional<Weapon> weapon = findMyWeaponByName(weaponName);
+
             if(weapon.isPresent() && weapons.contains(weapon.get())){
                 weapons.remove(weapon.get());
             }
@@ -135,14 +146,20 @@ public class Story{
 
         //DRY - 1
         public void armWith(String weaponName){
-            Optional<Weapon> weapon = weapons
+            
+            Optional<Weapon> weapon = findMyWeaponByName(weaponName);
+            
+            if(weapon.isPresent() && weapons.contains(weapon.get())){
+                activeWeapon = weapon;
+            }
+        }
+
+        private Optional<Weapon> findMyWeaponByName(String weaponName){
+            return weapons
                 .stream()
                 .filter(w -> 
                     w.getName().equals(weaponName))
                 .findFirst();
-            if(weapon.isPresent() && weapons.contains(weapon.get())){
-                activeWeapon = weapon;
-            }
         }
 
         public void atack(Character character){
