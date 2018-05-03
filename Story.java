@@ -3,23 +3,23 @@ import java.math.BigDecimal;
 public class Story{
 
     public Story(){
-        Bulan x = new Bulan();
-        Bulan y = new Bulan();
+        Character villain = new Character();
+        Character poorGuy = new Character();
 
-        x.setCumIlStriga("Zmeul shmecher");
-        y.setCumIlStriga("Fratele mijlociu");
+        villain.setName("Zmeul shmecher");
+        poorGuy.setName("Fratele mijlociu");
 
-        x.setVerzisori(new BigDecimal(1000));
-        y.setVerzisori(new BigDecimal(1000));
+        villain.setFortune(new BigDecimal(1000));
+        poorGuy.setFortune(new BigDecimal(1000));
 
-        System.out.println(String.format("%s are %s\r\n",x.getCumIlStriga(), x.getVerzisori().toString()));
-        System.out.println(String.format("%s are %s\r\n",y.getCumIlStriga(), y.getVerzisori().toString()));
+        System.out.println(String.format("%s are %s\r\n",villain.getName(), villain.getFortune().toString()));
+        System.out.println(String.format("%s are %s\r\n",poorGuy.getName(), poorGuy.getFortune().toString()));
 
-        x.smangleste(y, new BigDecimal(100));
+        villain.smangleste(poorGuy, new BigDecimal(100));
 
-        System.out.println(String.format("\r\nDupa vizita lui %s la %s:\r\n",x.getCumIlStriga(), y.getCumIlStriga()));
-        System.out.println(String.format("%s are %s\r\n",x.getCumIlStriga(), x.getVerzisori().toString()));
-        System.out.println(String.format("%s are %s\r\n",y.getCumIlStriga(), y.getVerzisori().toString()));
+        System.out.println(String.format("\r\nDupa vizita lui %s la %s:\r\n",villain.getName(), poorGuy.getName()));
+        System.out.println(String.format("%s are %s\r\n",villain.getName(), villain.getFortune().toString()));
+        System.out.println(String.format("%s are %s\r\n",poorGuy.getName(), poorGuy.getFortune().toString()));
 
     }
 
@@ -27,32 +27,32 @@ public class Story{
         new Story();
     }
 
-    class Bulan{
-        private String cumIlStriga;
-        private BigDecimal verzisori;
+    class Character{
+        private String name;
+        private BigDecimal fortune;
 
-        public void setCumIlStriga(String x){
-            this.cumIlStriga = x;
+        public void setName(String name){
+            this.name = name;
         }
 
-        public String getCumIlStriga(){
-            return cumIlStriga;
+        public String getName(){
+            return name;
         }
 
-        public void setVerzisori(BigDecimal x){
-            this.verzisori = (new BigDecimal(0)).add(x);
+        public void setFortune(BigDecimal fortune){
+            this.fortune = (new BigDecimal(0)).add(fortune);
         }
 
-        public BigDecimal getVerzisori(){
-            return (new BigDecimal(0)).add(verzisori);
+        public BigDecimal getFortune(){
+            return (new BigDecimal(0)).add(fortune);
         }
 
-        public void smangleste(Bulan looser, BigDecimal cat){
+        public void smangleste(Character stolenFrom, BigDecimal amountToSteal){
 
-            BigDecimal deSmanglit = looser.getVerzisori().compareTo(cat)>=0?cat:looser.getVerzisori();
+            BigDecimal toSteal = stolenFrom.getFortune().compareTo(amountToSteal)>=0?amountToSteal:stolenFrom.getFortune();
             
-            looser.setVerzisori(looser.getVerzisori().subtract(deSmanglit));
-            setVerzisori(getVerzisori().add(deSmanglit));            
+            stolenFrom.setFortune(stolenFrom.getFortune().subtract(toSteal));
+            setFortune(getFortune().add(toSteal));            
         
         }
 
