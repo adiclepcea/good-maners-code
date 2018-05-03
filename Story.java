@@ -17,14 +17,24 @@ public class Story{
         
         Weapon bow = new Weapon("arc", 90);
 
-        hero.findWeapon(bow);
-        hero.armWith("arc");
-
         villain.setFortune(new BigDecimal(1000));
         poorGuy.setFortune(new BigDecimal(1000));
         hero.setFortune(new BigDecimal(1000));
 
         villain.setHealth(1000);
+
+        tellStory(villain, poorGuy, hero, bow, bow.getName());
+
+    }
+
+    private void tellStory(Character villain, 
+        Character poorGuy, 
+        Character hero,
+        Weapon weapon, 
+        String weaponName){
+
+        hero.findWeapon(weapon);
+        hero.armWith(weaponName);
 
         System.out.println(String.format("%s are %s\n",villain.getName(), villain.getFortune().toString()));
         System.out.println(String.format("%s are %s\n",poorGuy.getName(), poorGuy.getFortune().toString()));
@@ -55,7 +65,6 @@ public class Story{
 
         System.out.printf(String.format("%s da inapoi lui %s %s galbeni\n", hero.getName(), poorGuy.getName(), amountRecovered.toString()));
         System.out.printf(String.format("%s are acum %s galbeni\n", poorGuy.getName(), poorGuy.getFortune().toString()));
-
     }
 
     public static void main(String ...args){
