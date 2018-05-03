@@ -2,70 +2,109 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Story{
 
     private Character villain;
     private Character poorGuy;
     private Character hero;
-    private Weapon bow;
+    private Weapon weapon;
+    private Consumer<String> storyTeller;
 
     public Story(){        
         
+        prepareOutput();
+
         prepareCharacters();
 
-        tellStory(villain, poorGuy, hero, bow, bow.getName());
+        tellStory(villain, poorGuy, hero);
     }
-
-    private void prepareCharacters(){
-        
-        bow = new Weapon("arc", 90);
-        villain = new Character("Zmeul smecher", new BigDecimal(1000));
-        poorGuy = new Character("Fratele mijlociu", new BigDecimal(1000));
-        hero = new Character("Praslea cel voinic", new BigDecimal(1000), bow);
-
-        villain.setHealth(1000);
-    }
-
 
     private void tellStory(Character villain, 
         Character poorGuy, 
-        Character hero,
-        Weapon weapon, 
-        String weaponName){
+        Character hero){
 
-        hero.findWeapon(weapon);
-        hero.armWith(weaponName);
+        storyIntro();
+        storyClimax();
+        storyEpilog();
+        
+    }
 
-        System.out.println(String.format("%s are %s\n",villain.getName(), villain.getFortune().toString()));
-        System.out.println(String.format("%s are %s\n",poorGuy.getName(), poorGuy.getFortune().toString()));
+    private void storyIntro(){
+        storyTeller.accept(villain.getStatus());
+        storyTeller.accept(poorGuy.getStatus());
 
         villain.steal(poorGuy, new BigDecimal(100));
 
-        System.out.println(String.format("\nDupa vizita lui %s la %s:\n",villain.getName(), poorGuy.getName()));
-        System.out.println(String.format("%s are %s\n",villain.getName(), villain.getFortune().toString()));
-        System.out.println(String.format("%s are %s\n",poorGuy.getName(), poorGuy.getFortune().toString()));
+        storyTeller.accept(String.format("\nDupa vizita lui %s la %s:\n",villain.getName(), poorGuy.getName()));
+        storyTeller.accept(villain.getStatus());
+        storyTeller.accept(poorGuy.getStatus());        
+    }
 
-
-        System.out.println(String.format("\n%s il prinde pe %s\n", hero.getName(), villain.getName()));
-        System.out.println(String.format("%s are viata %s\n",villain.getName(), villain.getHealth()));
+    private void storyClimax(){
+        storyTeller.accept(String.format("\n%s il prinde pe %s\n", hero.getName(), villain.getName()));
+        storyTeller.accept(String.format("%s are viata %s\n",villain.getName(), villain.getHealth()));
         
         while(villain.getHealth()>0){
             hero.atack(villain);
-            System.out.println(String.format("%s il ataca pe %s cu un %s\n", hero.getName(), villain.getName(), hero.weaponName()));
-            System.out.println(String.format("%s are viata %s\n",villain.getName(), villain.getHealth()));
+            storyTeller.accept(String.format("%s il ataca pe %s cu un %s\n", hero.getName(), villain.getName(), hero.weaponName()));
+            storyTeller.accept(String.format("%s are viata %s\n",villain.getName(), villain.getHealth()));
         }
+        
+    }
 
+    private void storyEpilog(){
         BigDecimal amountRecovered = villain.getFortune();
 
         hero.steal(villain, amountRecovered);        
 
-        System.out.printf(String.format("\n%s ia de la %s %s galbeni\n", hero.getName(), villain.getName(), amountRecovered.toString()));
+        storyTeller.accept(String.format("\n%s ia de la %s %s galbeni\n", hero.getName(), villain.getName(), amountRecovered.toString()));
         
-        hero.donate(poorGuy, amountRecovered);
+        hero.donate(poorGuy, amountRecovered);        
 
-        System.out.printf(String.format("%s da inapoi lui %s %s galbeni\n", hero.getName(), poorGuy.getName(), amountRecovered.toString()));
-        System.out.printf(String.format("%s are acum %s galbeni\n", poorGuy.getName(), poorGuy.getFortune().toString()));
+        storyTeller.accept(String.format("%s da inapoi lui %s %s galbeni\n", hero.getName(), poorGuy.getName(), amountRecovered.toString()));
+        storyTeller.accept(String.format("%s are acum %s galbeni\n", poorGuy.getName(), poorGuy.getFortune().toString()));
+    }
+
+
+    private void prepareOutput(){
+        storyTeller = System.out::println;
+    }
+
+    private void prepareCharacters(){
+    
+        prepareWeapon();
+        prepareVillain();
+        preparePoorGuy();
+        prepareHero();
+
+    }
+
+    private void prepareWeapon(){
+
+        weapon = new Weapon("arc", 90);
+
+    }
+
+    private void prepareVillain(){
+
+        villain = new Character("Zmeul smecher", new BigDecimal(1000));
+        villain.setHealth(1000);
+
+    }
+
+    private void preparePoorGuy(){
+
+        poorGuy = new Character("Fratele mijlociu", new BigDecimal(1000));
+
+    }
+
+    private void prepareHero(){
+
+        hero = new Character("Praslea cel voinic", new BigDecimal(1000), weapon);
+
     }
 
     public static void main(String ...args){
@@ -179,6 +218,10 @@ public class Story{
 
         public void donate(Character donateTo, BigDecimal amountDonated){
             donateTo.setFortune(donateTo.getFortune().add(amountDonated));
+        }        
+
+        private String getStatus(){
+            return String.format("%s are %s\n",getName(), getFortune().toString());
         }
 
     }
