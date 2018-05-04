@@ -1,4 +1,4 @@
-package story;
+package clepcea.story;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -9,9 +9,9 @@ import java.util.function.Function;
 
 public class Story{
 
-    private story.Character villain;
-    private story.Character poorGuy;
-    private story.Character hero;
+    private clepcea.story.Character villain;
+    private clepcea.story.Character poorGuy;
+    private clepcea.story.Character hero;
     private Weapon weapon;
     private Consumer<String> storyTeller;
 

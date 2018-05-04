@@ -1,4 +1,4 @@
-package story;
+package clepcea.story;
 
 public class Weapon{
 
